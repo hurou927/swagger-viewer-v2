@@ -1,0 +1,23 @@
+Version: '0.0.1'
+
+Services:
+# auth
+
+  - name: auth
+    dir:  ./swagger/auth
+    group: base
+    lastUpdated: 1542937301
+    latestVersion: 1.0.0
+# audit
+  - name: audit
+    dir: ./swagger/audit
+    group: base
+    lastUpdated: 1542937310
+    latestVersion: 1.0.0
+# ess
+  - name: ess
+    dir: ./swagger/ess
+    group: collabo
+    lastUpdated: 1542937305
+    latestVersion: 1.0.0
+

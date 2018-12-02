@@ -1,28 +1,51 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actionCreators from './actions';
+
+import TopBar from './TopBar';
+import LeftDrawer from './LeftDrawer';
+import SwaggerUI from './Swagger';
+import Home from './Home'
+
+
+
+const appConfigURL = './config.yaml';
 
 class App extends Component {
+
+  constructor(props){
+    super(props);
+
+    props.actions.fetchAppConfig(appConfigURL);
+
+  }
+
+
   render() {
+    const { actions, state} = this.props;
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div>
+        <TopBar />
+        <LeftDrawer />
+        { state.isOpenHome ? <Home /> : <SwaggerUI /> }
       </div>
     );
   }
 }
 
-export default App;
+export default connect(
+  state => {
+    return { state: { 
+      // appConfig: state.appConfig,
+      // serviceConfig: state.serviceConfig,
+      isOpenHome: state.isOpenHome,
+    } };
+  },
+  dispatch => {
+    return { actions: bindActionCreators(actionCreators, dispatch) };
+  }
+)(App);
+
+
+// export default App;

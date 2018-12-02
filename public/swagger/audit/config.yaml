@@ -1,0 +1,17 @@
+Service : audit
+
+
+Releases:
+  -
+    Version: 3.0.0
+    Path: ./swagger3_0_0.yaml
+    Tag: development
+  -
+    Version: 2.20.1
+    Path: ./swagger2_20_1.yaml
+    Tag: Production
+  -
+    Version: 1.52.100
+    Path: ./swagger1_52_100.yaml
+    Tag: InternalRelease
+
