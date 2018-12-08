@@ -21,7 +21,12 @@ const styles = theme => ({
 
 class SwaggerUI extends Component {
 
+    constructor(props){
+        super(props);
 
+        const { actions, state } = this.props;
+        actions.fetchServiceConfig(props.service);
+    }
 
 
     componentDidMount() {
@@ -65,8 +70,11 @@ class SwaggerUI extends Component {
 
  
     render() {
-        // const { classes } = this.props;
-        console.log('SwaggerUI render', this.state, this.props);
+        const { actions, state } = this.props;
+
+        if ( !state.serviceConfig ) {
+            return (<div id="swaggerContainer" >Can Not Read Swagger</div>)
+        }
         return (
             <div>
                 
