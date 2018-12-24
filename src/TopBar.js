@@ -2,6 +2,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withRouter } from 'react-router-dom';
 import * as actionCreators from './actions';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -33,7 +34,11 @@ function TopBar(props) {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton className={classes.menuButton} color="inherit" aria-label="Menu" onClick={(e) => {  props.actions.toggleLeftDrawer(true) }}>
+          <IconButton 
+            className={classes.menuButton} 
+            color="inherit" 
+            aria-label="Menu" 
+            onClick={(e) => {  props.actions.toggleLeftDrawer(true) }}>
             <MenuIcon />
           </IconButton>
           <img
@@ -41,7 +46,7 @@ function TopBar(props) {
             width="32" height="32"
             alt=""
             style={{ padding: "0 10px 0 0" }}
-            onClick={e => { actions.jumpHome() }}
+            onClick={e => { props.history.push('/') }}
           />
           <Typography variant="h6" color="inherit" className={classes.grow}>
             HUWagger
@@ -62,7 +67,8 @@ export default connect(
   dispatch => {
     return { actions: bindActionCreators(actionCreators, dispatch) };
   }
-)(withStyles(styles)(TopBar));
+// )(withStyles(styles)(TopBar));
+)(withStyles(styles)(withRouter(TopBar)));
 
 
 // export default withStyles(styles)(ButtonAppBar);

@@ -17,10 +17,11 @@ export const toggleLeftDrawer = (isOpenLeftDrawer) => {
 }
 
 
-export const selectService = (config) => {
+export const selectService = (config, defaultVersion) => {
     return {
         type: actionTypes.SELECT_SERVICE,
         serviceConfig: config,
+        defaultVersion,
     }
 }
 
@@ -60,15 +61,18 @@ export const toggleUpdateTag = (isOpenUpdateTag) => {
 export const fetchAppConfig = (path) => {
     return function (dispatch) {
         return fetch(path)
-            .then(res => res.text())
-            .then(body => {
+            .then(res => {
+                console.log(res);
+                return res.text()
+            }).then(body => {
+                console.log(path, body);
                 const config = yaml.safeLoad(body);
                 dispatch(loadAppConfig(config));
             });
     }
 }
 
-export const fetchServiceConfig = (selectedServiceInfo) => {
+export const fetchServiceConfig = (selectedServiceInfo, defaultVersion=undefined) => {
     return function (dispatch) {
         console.log('fetchSC', selectedServiceInfo);
         const configPath = path.resolve(selectedServiceInfo.dir, 'config.yaml');
@@ -78,8 +82,8 @@ export const fetchServiceConfig = (selectedServiceInfo) => {
                 const config = yaml.safeLoad(body);
                 dispatch(selectService({
                     basic: selectedServiceInfo,
-                    detail: config
-                }));
+                    detail: config,
+                }, defaultVersion));
             });
     }
 }

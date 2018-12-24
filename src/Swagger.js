@@ -3,7 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actionCreators from './actions';
+import { withRouter } from 'react-router-dom';
+import  querystring from 'querystring';
 import path from 'path';
+// import url from 'url';
+import urljoin from 'url-join';
+
 import SwaggerUi, {presets} from 'swagger-ui';
 
 import 'swagger-ui/dist/swagger-ui.css';
@@ -15,17 +20,18 @@ import UpdateTag from './UpdateTag';
 
 const styles = theme => ({
 });
-
-
+    
+    
 
 
 class SwaggerUI extends Component {
 
     constructor(props){
         super(props);
-
+        console.log(props);
+        // console.log(querystring.parse(props.location.search.slice(1)));
         const { actions, state } = this.props;
-        actions.fetchServiceConfig(props.service);
+        actions.fetchServiceConfig(props.service, this.getVersionFromQueryString());
     }
 
 
@@ -40,27 +46,40 @@ class SwaggerUI extends Component {
     shouldComponentUpdate(nextProps, nextState) {;
         const { state: currentPropsState} = this.props;
         const { state: nextPropsState} = nextProps;
-        
         if(currentPropsState.serviceConfig === undefined || nextPropsState.serviceConfig === undefined) {
             return true;
         }
         if (currentPropsState.selectedVersionInfo === nextPropsState.selectedVersionInfo
         && currentPropsState.serviceConfig.basic.name === nextPropsState.serviceConfig.basic.name){
+            this.props.history.replace({ search: `?version=${currentPropsState.selectedVersionInfo.Version}` });
             return false;
         }
         return true;
     }
 
+    getVersionFromQueryString(){
+        const versions = querystring.parse(this.props.location.search.slice(1)).version;
+        if (Array.isArray(versions)) {
+            return versions[0];
+        } else {
+            return versions;
+        }
+    }
+
     displaySwagger(){
-        let swaggerURL = './swagger/auth/swagger0_0_1.yaml';
+        let swaggerURL = '';
         const { actions, state } = this.props;
 
         if (state.serviceConfig) {
             const dirname = state.serviceConfig.basic.dir;
-            swaggerURL = path.resolve(dirname, state.selectedVersionInfo.Path);
+            swaggerURL = urljoin('/', dirname, state.selectedVersionInfo.Path);
         }
 
-        SwaggerUi({
+        if (state.selectedVersionInfo)
+            // this.props.history.replace({ pathname: `?version=${state.selectedVersionInfo.Version}` })
+            // this.props.history.replace({ pathname: this.props.service.name ,search: `?version=${state.selectedVersionInfo.Version}` })
+            this.props.history.replace({ search: `?version=${state.selectedVersionInfo.Version}` })
+            SwaggerUi({
             dom_id: '#swaggerContainer',
             url: swaggerURL,
             spec: this.props.spec,
@@ -71,7 +90,6 @@ class SwaggerUI extends Component {
  
     render() {
         const { actions, state } = this.props;
-
         if ( !state.serviceConfig ) {
             return (<div id="swaggerContainer" >Can Not Read Swagger</div>)
         }
@@ -82,7 +100,9 @@ class SwaggerUI extends Component {
                 <UpdateTag/>
 
                 
-                <div style={{ margin: "40px 0 0 40px" }}><SelectVersion /></div>
+                <div style={{ margin: "40px 0 0 40px" }}>
+                    <SelectVersion />
+                </div>
                 <div id="swaggerContainer" />
             </div>
         );
@@ -107,7 +127,7 @@ export default connect(
     dispatch => {
         return { actions: bindActionCreators(actionCreators, dispatch) };
     }
-)(withStyles(styles)(SwaggerUI));
+)(withStyles(styles)(withRouter(SwaggerUI)));
 
 // SwaggerUI.defaultProps = {
 //     url: `http://petstore.swagger.io/v2/swagger.json`

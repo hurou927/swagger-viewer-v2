@@ -7,31 +7,38 @@ import TopBar from './TopBar';
 import LeftDrawer from './LeftDrawer';
 import SwaggerUI from './Swagger';
 import Home from './Home'
-import { BrowserRouter, Route, Link } from 'react-router-dom'
+import { BrowserRouter, Route} from 'react-router-dom'
 
 
-const appConfigURL = './config.yaml';
+const appConfigURL = '/config.yaml';
 
 class App extends Component {
 
   constructor(props){
     super(props);
-
     props.actions.fetchAppConfig(appConfigURL);
 
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const { actions, state } = this.props;
+    const { actions:na, state:ns } = nextProps;
+    if (  state.appConfig !== undefined && ns.appConfig !== undefined ) {
+      return false;
+    }
+    return true;
+  }
 
   render() {
     const { actions, state} = this.props;
     console.log(state);
     return (
       <div>
-        <TopBar />
-        <LeftDrawer />
         {/* { state.isOpenHome ? <Home /> : <SwaggerUI /> } */}
         <BrowserRouter>
           <div>
+            <TopBar />
+            <LeftDrawer />
             <Route exact path='/' component={Home} />
             {
               !state.appConfig ? 'NotSerivce' : 

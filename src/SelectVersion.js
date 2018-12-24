@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withRouter } from 'react-router-dom';
 import * as actionCreators from './actions';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -31,22 +32,26 @@ const styles = theme => ({
 class SelectVersion extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            value: ''
-        }
+        // this.state = {
+            // value: ''
+        // }
     }
     render() {
+
         const { classes } = this.props;
         const { actions, state } = this.props;
         const releases = state.serviceConfig ? state.serviceConfig.detail.Releases : [];
+        // const value = this.state.value !== '' ? zthis.state.value : ; 
         return (
             <FormControl className={classes.formControl}>
                 <InputLabel>Version</InputLabel>
                 <Select
-                    value={this.state.value}
+                    // value={ (this.state.value === '' && releases.length > 0) ? JSON.stringify(releases[0]) : this.state.value}
+                    value = {JSON.stringify(state.selectedVersionInfo)}
                     onChange={e=>{
                         const versionInfoObj = JSON.parse(e.target.value);
-                        this.setState({ value: e.target.value});
+                        // this.setState({ value: e.target.value});
+                        console.log(versionInfoObj);
                         actions.selectVersion(versionInfoObj );
                     }}
                 >
@@ -93,13 +98,14 @@ export default connect(
         return {
             state: {
                 serviceConfig: state.serviceConfig,
+                selectedVersionInfo: state.selectedVersionInfo,
             }
         };
     },
     dispatch => {
         return { actions: bindActionCreators(actionCreators, dispatch) };
     }
-)(withStyles(styles)(SelectVersion));
+)(withStyles(styles)(withRouter(SelectVersion)));
 
 
 // export default withStyles(styles)(SelectVersion);

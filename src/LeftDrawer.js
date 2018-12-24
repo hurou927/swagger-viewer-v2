@@ -1,18 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actionCreators from './actions';
 
 import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-
 import ListItemText from '@material-ui/core/ListItemText';
-
 import TextField from '@material-ui/core/TextField';
 
 
@@ -62,9 +59,9 @@ class LeftDrawer extends Component {
             <ListItem
               button key={service.name}
               onClick={e => {
-                // this.props.onSelect(service);
-                actions.fetchServiceConfig( service )
-                // actions.toggleLeftDrawer(false)
+                this.props.actions.toggleLeftDrawer(false)
+                // console.log(this.props);
+                this.props.history.push(`/${service.name}`);
               }}
             >
               <ListItemText primary={service.name} />
@@ -108,4 +105,4 @@ export default connect(
   dispatch => {
     return { actions: bindActionCreators(actionCreators, dispatch) };
   }
-)(withStyles(styles)(LeftDrawer));
+)(withStyles(styles)(withRouter(LeftDrawer)));

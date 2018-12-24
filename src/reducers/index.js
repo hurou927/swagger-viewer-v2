@@ -27,11 +27,20 @@ const reducer = (state=initialAppState, action) => {
         }
     }else if (action.type === actionTypes.SELECT_SERVICE){
         action.serviceConfig.detail.Releases = (action.serviceConfig.detail.Releases || []).sort((a, b) => compareVersions(b.Version, a.Version));
+        let defaultSelectVersion = action.serviceConfig.detail.Releases[0];
+        if (action.defaultVersion) {
+            for (let i = 0; i < action.serviceConfig.detail.Releases.length; i=i+1){
+                if (action.serviceConfig.detail.Releases[i].Version === action.defaultVersion ) {
+                    defaultSelectVersion = action.serviceConfig.detail.Releases[i];
+                    break;
+                }
+            }
+        }
         return {
             ...state,
             serviceConfig: action.serviceConfig,
             isOpenLeftDrawer: false,
-            selectedVersionInfo: action.serviceConfig.detail.Releases[0],
+            selectedVersionInfo: defaultSelectVersion,//action.serviceConfig.detail.Releases[0],
             isOpenHome: false
         }
     }else if (action.type === actionTypes.SELECT_VERSION) {
